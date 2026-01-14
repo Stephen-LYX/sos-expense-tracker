@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+  // need to run npx prisma generate
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+// @id means "This field is the primary key of the modal"
+// @default(autoincrement()) means 
+// "If no value is provided, let the database generate one automatically, similar to SERIAL" (used to create an auto incrementing integer column)
+// @unique means "No two rows can have the same value in this column".
+
+// ? symbol means "The field is optional" Example: name String? (name column is optional, can be null in database)
+// [] symbol means "Relation field, it does not create a database column, used by Prisma to represent relationships"
+
+// Model level @@ attrivutes mean "This applies to the entire model, not a single field." 
+// Example: @@id([usedId, groupId]) means "Together, these fields form the primary key". Composite primary key, each 
+// field individually may not be unique, the combination must be unique.
+
+// (1)
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique  
+  username String @unique
+  name String?
+  passwordHash String
+  createdAt DateTime @default(now())
+  
+  //Relation field naming style: Prisma convention is lowercase plural so this is what we will follow 
+  account Account[]
+  category Category[]
+  transaction Transaction[]
+  budget Budget[]
+}
+
+// (2)
+model Account {
+  id Int @id @default(autoincrement())
+  userId Int 
+  user User @relation(fields: [userId], references: [id])
+  
+  accountName String
+  //example: chase checking, discover credit card, truist 
+
+  type String //String is good for now, but maybe use "enum" in futhur developments/improvements
+  //example: checking, savings, credit, cash
+
+  balance Decimal
+  createdAt DateTime @default(now()) 
+
+  transaction Transaction[]
+} 
+
+// (3)
+model Category {
+  id Int @id @default(autoincrement())
+  
+  categoryName String
+  //example: food, rent, travel 
+
+  userId Int 
+  user User @relation(fields: [userId], references: [id])
+
+  // Self referencing recursive table. 
+  // parentId can be null, Top level categories have no parent
+  // Parent categories with children examples:
+  // Parent:    | Major expenses: |
+  //            ----------------------
+  // Children:  | Tuition fee     |
+  // Children:  | Rent            |
+  parentId Int? //this is the foreign key
+  parent Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+
+  transaction Transaction[]
+  budget Budget[]
+}
+
+// (4)
+model Transaction {
+
+  id Int @id @default(autoincrement())
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  accountId Int 
+  account Account @relation(fields: [accountId], references: [id])
+  
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+
+  amount Decimal
+  
+  type String
+  // Example for Type of Transaction: income, expense/spending
+
+  note String?
+
+  occurredAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+// (5)
+model Budget {
+  id Int @id @default(autoincrement())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  categoryId Int
+  category Category @relation(fields: [categoryId], references: [id])
+  amountLimit Decimal
+  startDate DateTime @default(now())
+  endDate DateTime @default(now())
+}

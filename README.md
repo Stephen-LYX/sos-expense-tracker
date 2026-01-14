@@ -34,3 +34,12 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+Why I chose Prisma ORM:
+1. A modern Object Relational Mapper for Node.js & TypeScript that simplifies database interactions by providing a *type-safe* query builder, automated migrations and intuitive data modeling. 
+   
+2. This reduces:
+   - Bugs 
+   - Boilerplate
+   - Cognitive load 
