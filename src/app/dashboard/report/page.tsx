@@ -1,4 +1,4 @@
-import EditableCategory from "@/component/budget/EditableCategory";
+import EditableCategory from "@/components/budget/EditableCategory";
 
 export default function Report() {
     return (

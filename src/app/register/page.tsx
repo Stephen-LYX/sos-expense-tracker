@@ -136,8 +136,8 @@ function Login() {
                     Log In With Google
                 </button>
 
-                <Link href="/register" className="text-sm text-center text-gray-600 mt-2">
-                    Don't have an account, sign up here.
+                <Link href="/login" className="text-sm text-center text-gray-600 mt-2">
+                    Have an account? Login here.
                 </Link>
             </div>
         </main>

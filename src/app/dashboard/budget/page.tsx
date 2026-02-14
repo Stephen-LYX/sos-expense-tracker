@@ -1,10 +1,17 @@
 import prisma from "@/lib/prisma";
-import ShowListItem from "@/component/budget/ShowListItems";
+import ShowListItem from "@/components/budget/ShowListItems";
+import BudgetList from "@/components/budget/BudgetList";
+import { auth } from "@/auth";
 
-function Budget() {
-
+export default async function Budget() {
     const currentBalance = 3789.67;
     
+    const session = await auth()
+
+    const budgetData = await prisma.budget.findMany({
+        where: {userId: session?.user?.id}
+    })
+
     return (
         <main className="">
 
@@ -20,12 +27,13 @@ function Budget() {
 
             {/* change the 55vh to h-fit */}
             <section className="flex m-5 h-[55vh]">
-                <section className="flex h-[55vh] w-[60vw]">
-                    <ShowListItem categoryName="Priority Payments" subItems={[
+                <section className="flex h-[55vh] w-[60vw] ">
+                    {/* <ShowListItem categoryName="Priority Payments" subItems={[
                         {itemName: "Tuition fee", amount: 1480, spent: 1380},
                         { itemName: "Rent", amount: 1200, spent: 1200}
                     ]}
-                    />
+                    /> */}
+                    <BudgetList initialData={budgetData}/>
                 </section>
                 
                 <section className="border rounded-lg w-fit ml-10">
@@ -40,5 +48,3 @@ function Budget() {
         </main>
     )
 }
-
-export default Budget

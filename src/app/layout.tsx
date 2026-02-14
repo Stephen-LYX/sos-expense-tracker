@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavBarWrapper from "@/component/NavBarWrapper";
-import MainContentWrapper from "@/component/MainContentWrapper";
+import NavBarWrapper from "@/components/NavBarWrapper";
+import MainContentWrapper from "@/components/MainContentWrapper";
 
 export default function RootLayout({
   children,

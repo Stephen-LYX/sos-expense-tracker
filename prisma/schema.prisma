@@ -67,7 +67,9 @@ model Budget {
   id          Int      @id @default(autoincrement())
   userId      String
   categoryId  Int
+  title       String
   amountLimit Decimal
+  spent       Decimal  @default(0)
   startDate   DateTime @default(now())
   endDate     DateTime @default(now())
   category    Category @relation(fields: [categoryId], references: [id])
