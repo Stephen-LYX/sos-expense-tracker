@@ -11,7 +11,7 @@ function NavBarWrapper() {
 
     if (hideNav) return null;
 
-    return <Nav />
+    return <Nav pathname={pathname} />
 }
 
 export default NavBarWrapper

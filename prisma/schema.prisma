@@ -41,7 +41,7 @@ model Category {
   userId       String
   parentId     Int?
   categoryName String
-  budget       Budget[]
+  // budget       Budget[]
   parent       Category?     @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children     Category[]    @relation("CategoryHierarchy")
   user         User          @relation(fields: [userId], references: [id])
@@ -66,13 +66,13 @@ model Transaction {
 model Budget {
   id          Int      @id @default(autoincrement())
   userId      String
-  categoryId  Int
+  // categoryId  Int?
   title       String
-  amountLimit Decimal
-  spent       Decimal  @default(0)
-  startDate   DateTime @default(now())
-  endDate     DateTime @default(now())
-  category    Category @relation(fields: [categoryId], references: [id])
+  amountLimit Decimal   @db.Decimal(10,2)
+  spent       Decimal   @default(0) @db.Decimal(10, 2)
+  startDate   DateTime? @default(now())
+  endDate     DateTime? @default(now())
+  // category    Category? @relation(fields: [categoryId], references: [id])
   user        User     @relation(fields: [userId], references: [id])
 }
 

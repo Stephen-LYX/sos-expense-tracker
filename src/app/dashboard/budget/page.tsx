@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
 import ShowListItem from "@/components/budget/ShowListItems";
-import BudgetList from "@/components/budget/BudgetList";
 import { auth } from "@/auth";
+import NewButton from "@/components/budget/NewButton";
+import BudgetClient from "@/components/budget/BudgetClient";
 
 export default async function Budget() {
     const currentBalance = 3789.67;
@@ -9,31 +10,34 @@ export default async function Budget() {
     const session = await auth()
 
     const budgetData = await prisma.budget.findMany({
-        where: {userId: session?.user?.id}
+        where: {userId: session?.user?.id},
+        orderBy: {id: "asc"}
     })
-
+    
+    // Serialize Decimal to string for client component
+    const serializedBudgets = budgetData.map(budget => ({
+        ...budget,
+        amountLimit: budget.amountLimit.toString(),
+        spent: budget.spent.toString(),
+        startDate: budget.startDate || new Date(),
+        endDate: budget.endDate || new Date()
+    }))
+    
+    console.log("session: " , session)
+    console.log("user: ", session?.user?.id)
     return (
         <main className="">
 
-            {/* Box 1 */}
             <section className="text-4xl border rounded-lg pr-20 pl-20 pt-10 pb-10 ml-5 w-[40vw]">
                 Current Balance: {currentBalance}$
             </section>
 
-            {/* 
-                Box 2: 
-                Users can list categories, assign budget amount, how much was spent and see how much remains
-            */}
-
             {/* change the 55vh to h-fit */}
-            <section className="flex m-5 h-[55vh]">
-                <section className="flex h-[55vh] w-[60vw] ">
-                    {/* <ShowListItem categoryName="Priority Payments" subItems={[
-                        {itemName: "Tuition fee", amount: 1480, spent: 1380},
-                        { itemName: "Rent", amount: 1200, spent: 1200}
-                    ]}
-                    /> */}
-                    <BudgetList initialData={budgetData}/>
+            <section className="flex m-5 h-[65vh]">
+                <section className="flex flex-col gap-6 h-[65vh] w-[60vw]">
+                    <NewButton />
+
+                    <BudgetClient budgets={serializedBudgets} />
                 </section>
                 
                 <section className="border rounded-lg w-fit ml-10">

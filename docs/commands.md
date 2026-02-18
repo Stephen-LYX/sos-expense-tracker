@@ -16,3 +16,15 @@ npx prisma db pull
 npx prisma migrate status
 ```
 
+
+# when user updates prisma.schema 
+run 
+```
+npx prisma migrate dev --name whatever_you_want
+```
+
+- then run, so your code is updated to the latest database changes
+```
+npx prisma generate 
+```
+
