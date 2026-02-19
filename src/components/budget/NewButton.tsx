@@ -34,9 +34,9 @@ export default function NewButton() {
             {/* Modern gradient button */}
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                className="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 cursor-pointer min-w-[160px] h-[44px]"
             >
-                <span className="text-xl">+</span>
+                <span className="text-xl leading-none">+</span>
                 New Budget
             </button>
 

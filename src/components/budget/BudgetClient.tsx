@@ -1,8 +1,9 @@
 "use client"
 
-import { updateBudgetField } from "@/app/dashboard/budget/action"
+import { deleteBudgetItem, updateBudgetField } from "@/app/dashboard/budget/action"
 import { useState } from "react"
-import { start } from "repl"
+import { Trash2 } from 'lucide-react';
+
 
 // defining the type for a single budget item
 type BudgetItem = {
@@ -16,9 +17,10 @@ type BudgetItem = {
 
 type BudgetClientProps = {
     budgets: BudgetItem[]
+    deleteMode: boolean
 }
 
-export default function BudgetClient ({budgets}: BudgetClientProps) {
+export default function BudgetClient ({budgets, deleteMode}: BudgetClientProps) {
     
     const [editingCell, setEditingCell] = useState<{rowId: number, field: string} | null>(null)
     const [tempValue, setTempValue] = useState<string>("")
@@ -38,21 +40,26 @@ export default function BudgetClient ({budgets}: BudgetClientProps) {
         setTempValue("")
     }
 
+    async function deleteItem(rowId: number) {
+        await deleteBudgetItem(rowId)
+    }
+
     return (
-        <div className="w-full max-h-[600px] overflow-y-auto rounded-2xl shadow-xl bg-white scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <div className="w-full max-h-150 overflow-y-auto rounded-2xl shadow-xl bg-white scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
             <table className="w-full border-collapse">
                 <thead className="sticky top-0 z-10">
-                    <tr className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                    <tr className="bg-linear-to-r from-blue-600 to-indigo-600 text-white">
                         <th className="px-6 py-4 text-left font-semibold text-sm uppercase tracking-wider">Title</th>
                         <th className="px-6 py-4 text-right font-semibold text-sm uppercase tracking-wider">Budget</th>
                         <th className="px-6 py-4 text-right font-semibold text-sm uppercase tracking-wider">Spent</th>
                         <th className="px-6 py-4 text-right font-semibold text-sm uppercase tracking-wider">Remaining</th>
+                        {deleteMode && <th className="px-6 py-4 text-center font-semibold text-sm uppercase tracking-wider">Actions</th>}
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                     {budgets.length === 0 ? (
                         <tr>
-                            <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
+                            <td colSpan={deleteMode ? 5 : 4} className="px-6 py-12 text-center text-gray-500">
                                 <div className="flex flex-col items-center gap-3">
                                     <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -70,7 +77,7 @@ export default function BudgetClient ({budgets}: BudgetClientProps) {
                             return (
                                 <tr 
                                     key={budget.id} 
-                                    className="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
+                                    className="hover:bg-linear-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
                                 >
                                     <td className="px-6 py-4">
                                         {
@@ -84,7 +91,7 @@ export default function BudgetClient ({budgets}: BudgetClientProps) {
                                                         if (e.key === "Enter") saveEdit(budget.id, "title", tempValue)
                                                         if (e.key === "Escape") cancelEdit()    
                                                     }}
-                                                    className="w-full px-3 py-2 font-semibold text-gray-900 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                                                    className="w-full px-3 py-2 font-semibold text-gray-900 bg-linear-to-r from-blue-50 to-indigo-50 border-2 border-blue-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
                                                     autoFocus
                                                 />
                                             ) : (
@@ -183,6 +190,17 @@ export default function BudgetClient ({budgets}: BudgetClientProps) {
                                             </span>
                                         </div>
                                     </td>
+                                    {deleteMode && (
+                                        <td className="px-6 py-4 text-center">
+                                            <button 
+                                                className="text-red-500 hover:text-red-700 transition-colors duration-200 p-2 rounded-lg hover:bg-red-50 cursor-pointer"
+                                                onClick={() => deleteBudgetItem(budget.id)}
+                                                title="Delete this budget"
+                                            >
+                                                <Trash2 size={20} />
+                                            </button>
+                                        </td>
+                                    )}
                     </tr>
                             )
                         })

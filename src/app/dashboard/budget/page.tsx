@@ -1,8 +1,7 @@
 import prisma from "@/lib/prisma";
-import ShowListItem from "@/components/budget/ShowListItems";
 import { auth } from "@/auth";
-import NewButton from "@/components/budget/NewButton";
 import BudgetClient from "@/components/budget/BudgetClient";
+import BudgetWrapper from "@/components/budget/BudgetWrapper";
 
 export default async function Budget() {
     const currentBalance = 3789.67;
@@ -35,9 +34,7 @@ export default async function Budget() {
             {/* change the 55vh to h-fit */}
             <section className="flex m-5 h-[65vh]">
                 <section className="flex flex-col gap-6 h-[65vh] w-[60vw]">
-                    <NewButton />
-
-                    <BudgetClient budgets={serializedBudgets} />
+                    <BudgetWrapper budgets={serializedBudgets} />
                 </section>
                 
                 <section className="border rounded-lg w-fit ml-10">
