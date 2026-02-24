@@ -1,8 +1,11 @@
+import CustomBalance from "@/components/CustomBalance"
 
 function Account() {
 
     return (
-        <h1>Hi</h1>
+        <div className="m-5">
+            <CustomBalance />
+        </div>
     )
 }
 

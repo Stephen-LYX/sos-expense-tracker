@@ -1,10 +1,10 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
-import BudgetClient from "@/components/budget/BudgetClient";
 import BudgetWrapper from "@/components/budget/BudgetWrapper";
+import DisplayBalance from "@/components/DisplayBalance";
+import { PieChartDisplay } from "@/components/PieChartDisplay";
 
 export default async function Budget() {
-    const currentBalance = 3789.67;
     
     const session = await auth()
 
@@ -21,29 +21,67 @@ export default async function Budget() {
         startDate: budget.startDate || new Date(),
         endDate: budget.endDate || new Date()
     }))
+
+    const balanceData = await prisma.account.findMany({
+        where: {userId: session?.user?.id},
+        // orderBy: {id: "asc"}
+    })
+
+    const balanceDataToString = balanceData.map(account => ({
+        ...account, 
+        balance: account.balance.toString(), 
+    }))
     
-    console.log("session: " , session)
-    console.log("user: ", session?.user?.id)
+    // calculating the sum of expenses 
+    const sumOfExpenses = await prisma.budget.aggregate({
+        _sum: {
+            // setting the field to true tells prisma to sum this field 
+            amountLimit: true
+        }, 
+        where: {
+            userId: session?.user?.id
+        }
+    })
+    
     return (
         <main className="">
 
-            <section className="text-4xl border rounded-lg pr-20 pl-20 pt-10 pb-10 ml-5 w-[40vw]">
-                Current Balance: {currentBalance}$
+            <section className="flex gap-6 m-5">
+                {/* Total Income Card */}
+                <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium uppercase tracking-wider text-gray-600">Total Income</p>
+                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-green-500 to-green-600 bg-clip-text text-transparent">$0.00</p>
+                    </div>
+                </div>
+
+                {/* Total Expenses Card */}
+                <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium uppercase tracking-wider text-gray-600">Total Expenses</p>
+                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+                            ${sumOfExpenses._sum.amountLimit?.toString() || "0.00 "}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Total Net Income Card */}
+                <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
+                    <div className="flex flex-col">
+                        <p className="text-sm font-medium uppercase tracking-wider text-gray-600">Net Income</p>
+                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">$0.00</p>
+                    </div>
+                </div>
             </section>
 
-            {/* change the 55vh to h-fit */}
-            <section className="flex m-5 h-[65vh]">
-                <section className="flex flex-col gap-6 h-[65vh] w-[60vw]">
+            {/* Budget table and chart section */}
+            <section className="flex items-start gap-6 m-5">
+                <section className="flex flex-col gap-6 w-[60vw]">
                     <BudgetWrapper budgets={serializedBudgets} />
                 </section>
                 
-                <section className="border rounded-lg w-fit ml-10">
-                    <div className="p-5">
-                        <figure>
-                            
-                        </figure>
-                        Graph goes here
-                    </div>
+                <section className="mt-15">
+                    <PieChartDisplay />
                 </section>
             </section>
         </main>
