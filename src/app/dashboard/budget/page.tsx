@@ -1,7 +1,6 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
 import BudgetWrapper from "@/components/budget/BudgetWrapper";
-import DisplayBalance from "@/components/DisplayBalance";
 import { PieChartDisplay } from "@/components/PieChartDisplay";
 
 export default async function Budget() {
@@ -42,6 +41,17 @@ export default async function Budget() {
             userId: session?.user?.id
         }
     })
+
+    const displayToTalBalance = await prisma.account.aggregate({
+        _sum: {
+            balance: true
+        }, 
+        where: {
+            userId: session?.user?.id
+        }
+    })
+
+    const netIncome = Number(displayToTalBalance._sum.balance || 0) - Number(sumOfExpenses._sum.amountLimit || 0)
     
     return (
         <main className="">
@@ -51,7 +61,7 @@ export default async function Budget() {
                 <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
                     <div className="flex flex-col">
                         <p className="text-sm font-medium uppercase tracking-wider text-gray-600">Total Income</p>
-                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-green-500 to-green-600 bg-clip-text text-transparent">$0.00</p>
+                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-green-500 to-green-600 bg-clip-text text-transparent">${displayToTalBalance._sum.balance?.toString() || "0.00 "}</p>
                     </div>
                 </div>
 
@@ -69,7 +79,7 @@ export default async function Budget() {
                 <div className="flex-1 bg-white border-2 border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6">
                     <div className="flex flex-col">
                         <p className="text-sm font-medium uppercase tracking-wider text-gray-600">Net Income</p>
-                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">$0.00</p>
+                        <p className="text-4xl font-bold mt-2 bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">${netIncome}</p>
                     </div>
                 </div>
             </section>
