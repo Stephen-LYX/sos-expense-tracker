@@ -27,7 +27,6 @@ type data = {
 
 export const description = "A pie chart with a legend"
 
-
 const chartConfig = {
   value: {
     label: "Amount",
