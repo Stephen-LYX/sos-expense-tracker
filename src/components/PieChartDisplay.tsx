@@ -1,97 +1,118 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
-import { LabelList, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart } from "recharts"
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import React from "react"
 
-export const description = "A pie chart with a label list"
+type data = {
+  paid: number,
+  remaining: number,
+  unallocated: number
+}
 
-const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
-]
+export const description = "A pie chart with a legend"
+
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors",
+  value: {
+    label: "Amount",
   },
-  chrome: {
-    label: "Chrome",
+  Paid: {
+    label: "Paid",
     color: "var(--chart-1)",
   },
-  safari: {
-    label: "Safari",
+  Remaining: {
+    label: "Remaining",
     color: "var(--chart-2)",
   },
-  firefox: {
-    label: "Firefox",
+  Unallocated: {
+    label: "Unallocated",
     color: "var(--chart-3)",
-  },
-  edge: {
-    label: "Edge",
-    color: "var(--chart-4)",
-  },
-  other: {
-    label: "Other",
-    color: "var(--chart-5)",
   },
 } satisfies ChartConfig
 
-export function PieChartDisplay() {
+export function PieChartDisplay({paid, remaining, unallocated}: data) {
+    const chartData = [
+      { label: "Paid", value: paid, fill: "var(--chart-2)" },
+      { label: "Remaining", value: remaining, fill: "var(--chart-3)"},
+      { label: "Unallocated", value: unallocated, fill: "var(--chart-5)"}
+  ]
+
+  const totalExpenses = React.useMemo(() => {
+    return paid + remaining + unallocated
+  }, [paid, remaining, unallocated])
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Label List</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Budget Status</CardTitle>
+        <CardDescription>Tracking paid vs. outstanding obligations</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="[&_.recharts-text]:fill-background mx-auto aspect-square max-h-[250px]"
+          className="mx-auto aspect-square w-64 max-h-75"
         >
           <PieChart>
             <ChartTooltip
-              content={<ChartTooltipContent nameKey="visitors" hideLabel />}
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
             />
-            <Pie data={chartData} dataKey="visitors">
-              <LabelList
-                dataKey="browser"
-                className="fill-background"
-                stroke="none"
-                fontSize={12}
-                formatter={(value: keyof typeof chartConfig) =>
-                  chartConfig[value]?.label
-                }
+
+            <Pie data={chartData} dataKey="value" nameKey="label" innerRadius={70} strokeWidth={5}>
+              <Label
+                content={({ viewBox }) => {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                    return (
+                      <text
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                      >
+                        <tspan
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          className="fill-foreground text-2xl font-bold"
+                        >
+                          ${unallocated.toLocaleString()}
+                        </tspan>
+                        <tspan
+                          x={viewBox.cx}
+                          dy="20"
+                          className="fill-muted-foreground text-xs"
+                        >
+                          Unallocated
+                        </tspan>
+                      </text>
+                    )
+                  }
+                }}
               />
             </Pie>
+            
+            <ChartLegend
+              content={<ChartLegendContent nameKey="label" />}
+              className="-translate-y-2 flex-wrap gap-2 *:basis-1/4 *:justify-center"
+            />
           </PieChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   )
 }

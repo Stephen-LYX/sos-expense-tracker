@@ -53,6 +53,20 @@ export default async function Budget() {
 
     const netIncome = Number(displayToTalBalance._sum.balance || 0) - Number(sumOfExpenses._sum.amountLimit || 0)
     
+
+    // data for pie chart
+    const paidCalculation = await prisma.budget.aggregate({
+        _sum: {
+            spent: true
+        }, 
+        where: {
+            userId: session?.user?.id
+        }
+    })
+
+    const paid = Number(paidCalculation._sum.spent || 0)
+    const remaining = Number(sumOfExpenses._sum.amountLimit) - paid
+
     return (
         <main className="">
 
@@ -91,7 +105,7 @@ export default async function Budget() {
                 </section>
                 
                 <section className="mt-15">
-                    <PieChartDisplay />
+                    <PieChartDisplay paid={paid} remaining={remaining} unallocated={netIncome}/>
                 </section>
             </section>
         </main>
