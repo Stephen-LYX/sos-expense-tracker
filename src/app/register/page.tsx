@@ -1,12 +1,12 @@
 "use client"
 
-import { use, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
 import Link from "next/link"
 import Image from "next/image"
 
-function Login() {
+function Register() {
     
     const [username, setUsername] = useState("") //Track username input
     const [name, setName] = useState("") //Track name input
@@ -46,102 +46,98 @@ function Login() {
     }
 
     const handleGoogleLogin = () => {
-        signIn("google", {callbackUrl: "/budget"})
+        signIn("google", {callbackUrl: "/dashboard/budget"})
     }
-    return (
-        <main className="min-w-screen min-h-screen flex flex-col justify-center items-center">
-            <div className="border rounded-lg p-12  flex flex-col min-h-[50vh]">
-                <div className="flex justify-center items-center pb-3">
-                    <Image 
-                        src="/user.png" 
-                        alt="sign in icon"
-                        width={60}
-                        height={60}
-                    />
-                </div>
-                
-                <h3 className="text-center pb-4">Create an Account:</h3>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                    <div className="flex flex-col gap-2">
-                        <div>
-                            <label htmlFor="username" className="block">Username:</label>
-                            <input 
+    return (
+        <main className="min-h-screen flex items-center justify-center p-6">
+            <div className="w-full max-w-md bg-card/80 backdrop-blur-md border border-border rounded-2xl shadow-lg p-8 animate-slideUp">
+                <div className="flex flex-col items-center gap-3 mb-4">
+                    <Image src="/sos-logo.svg" alt="SOS logo" width={64} height={64} />
+                    <h1 className="text-2xl font-semibold">Create your account</h1>
+                    <p className="text-sm text-gray-500">Start tracking your expenses in seconds</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                    <div className="grid grid-cols-1 gap-3">
+                        <label className="flex flex-col gap-1">
+                            <span className="text-sm">Username</span>
+                            <input
                                 type="text"
                                 id="username"
                                 placeholder="Username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="border pl-0.5 w-full"
+                                className="w-full px-4 py-2 rounded-md bg-input border border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
                                 required
                             />
-                        </div>
+                        </label>
 
-                        <div>
-                            <label htmlFor="name" className="block">Name:</label>
-                            <input 
+                        <label className="flex flex-col gap-1">
+                            <span className="text-sm">Name</span>
+                            <input
                                 type="text"
                                 id="name"
-                                placeholder="Name"
+                                placeholder="Full name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="border pl-0.5 w-full"
+                                className="w-full px-4 py-2 rounded-md bg-input border border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
                                 required
                             />
-                        </div>
+                        </label>
 
-                        <div>
-                            <label htmlFor="email" className="block">Email:</label>
-                            <input 
+                        <label className="flex flex-col gap-1">
+                            <span className="text-sm">Email</span>
+                            <input
                                 type="email"
                                 id="email"
-                                placeholder="email"
+                                placeholder="you@company.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="border pl-0.5 w-full"
+                                className="w-full px-4 py-2 rounded-md bg-input border border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
                                 required
                             />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="password" className="block">Password:</label>
-                            <input 
+                        </label>
+
+                        <label className="flex flex-col gap-1">
+                            <span className="text-sm">Password</span>
+                            <input
                                 type="password"
                                 id="password"
-                                placeholder="password"
+                                placeholder="At least 8 characters"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="border pl-0.5 w-full"
+                                className="w-full px-4 py-2 rounded-md bg-input border border-transparent focus:outline-none focus:ring-2 focus:ring-ring"
                                 required
                             />
-                        </div>
+                        </label>
                     </div>
 
-                    <button type="submit" className="cursor-pointer border my-2">
-                        Create Account
+                    <button type="submit" className="w-full py-2 rounded-md bg-primary text-primary-foreground font-medium hover:opacity-95 transition cursor-pointer">
+                        Create account
                     </button>
                 </form>
 
                 {message && (
-                    <p className={`text-center text-sm mt-2 `}></p>
+                    <p className={`mt-3 text-center text-sm ${message.includes("Success") ? "text-green-500" : "text-destructive"}`}>{message}</p>
                 )}
 
-                <div className="flex items-center text-center gap-2">
-                    <div className="flex-1 border-t border-gray-300"></div>
-                    <span className="text-gray-500">or</span>
-                    <div className="flex-1 border-t border-gray-300"></div>
+                <div className="flex items-center text-center gap-3 my-5">
+                    <div className="flex-1 h-px bg-border"></div>
+                    <span className="text-sm text-gray-500">or</span>
+                    <div className="flex-1 h-px bg-border"></div>
                 </div>
 
-                <button onClick={handleGoogleLogin} className="border cursor-pointer mt-2">
-                    Log In With Google
+                <button onClick={handleGoogleLogin} className="w-full py-2 rounded-md border border-border bg-transparent flex items-center justify-center gap-2 hover:opacity-95 transition cursor-pointer">
+                    Continue with Google
                 </button>
 
-                <Link href="/login" className="text-sm text-center text-gray-600 mt-2">
-                    Have an account? Login here.
-                </Link>
+                <div className="text-sm text-center text-muted mt-4">
+                    <Link href="/login" className="text-primary hover:underline">Have an account? Login here.</Link>
+                </div>
             </div>
         </main>
     )
 }
 
-export default Login
+export default Register
