@@ -13,6 +13,7 @@ Simple personal expense tracking app built with Next.js, TypeScript, Prisma and 
 - **Transactions:** Record income/expenses, link to categories and accounts.
 - **Budgets:** Track budget limits and spent amounts.
 - **Reports:** Simple charts and summaries in the dashboard.
+- **Inline Editing:** Users can inline edit items added for convinience. 
 
 **Tech Stack**
 - **Frontend:** Next.js 16 (app router) + React 19 + TypeScript
