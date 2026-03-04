@@ -1,57 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**SOS Expense Tracker**
 
-## Getting Started
+Simple personal expense tracking app built with Next.js, TypeScript, Prisma and NextAuth.
 
-First, install dependencies:
+**Description**
+- **Purpose:** Track accounts, transactions, categories and budgets for individual users.
+- **Auth:** Email/password (credentials) + Google OAuth via NextAuth.
+- **DB:** PostgreSQL via Prisma.
+
+**Features**
+- **User accounts:** Sign up / sign in with credentials or Google.
+- **Accounts:** Create bank/account records with balances.
+- **Transactions:** Record income/expenses, link to categories and accounts.
+- **Budgets:** Track budget limits and spent amounts.
+- **Reports:** Simple charts and summaries in the dashboard.
+
+**Tech Stack**
+- **Frontend:** Next.js 16 (app router) + React 19 + TypeScript
+- **Auth:** NextAuth (JWT sessions) with `@auth/prisma-adapter`
+- **ORM:** Prisma (`postgresql` datasource)
+- **DB driver:** `pg` (Postgres)
+- **Charts / UI:** Shadcn, Tailwind, Lucide icons
+
+**Quick Start (local)**
+1. **Prerequisites:**
+   - Node.js (v18+ recommended)
+   - PostgreSQL (local or hosted)
+
+2. Clone and install:
 
 ```bash
 npm install
 ```
 
-Install Lucide React for icons:
+3. Create a `.env` file at project root with the required environment variables (example below).
+
+4. Initialize / migrate the database (development):
 
 ```bash
-npm install lucide-react
+npx prisma migrate dev --name init
+npx prisma generate
 ```
 
-Then, run the development server:
+5. Run the dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Important Environment Variables**
+- **`DATABASE_URL`**: Postgres connection string (example: `postgresql://user:pass@host:5432/dbname`)
+- **`NEXTAUTH_SECRET`**: Random secret for NextAuth (use `openssl rand -hex 32`)
+- **`GOOGLE_CLIENT_ID`** and **`GOOGLE_CLIENT_SECRET`**: For Google OAuth provider
+- (Optional) **`NEXTAUTH_URL`**: Root URL for NextAuth if running behind a proxy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Test Account (if users want to see the features without creating an account)**
+```
+- Username: test1@gmail.com
+- Password: password1234
+```
 
-## Learn More
+**Prisma / Database**
+- **Migrations:** Migrations are stored in `prisma/migrations`. Use `npx prisma migrate dev` for local development and `npx prisma migrate deploy` for production.
+- **Studio:** Run `npx prisma studio` to inspect data in a browser.
 
-To learn more about Next.js, take a look at the following resources:
+**Useful NPM Scripts**
+- **`dev`**: `npm run dev` — start Next.js dev server
+- **`build`**: `npm run build` — runs `prisma generate` then `next build`
+- **`start`**: `npm run start` — run the production server
+- **`lint`**: `npm run lint` — run ESLint
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Project Layout (key files)**
+- **`src/app`**: Next.js app routes, pages and API routes
+- **`src/auth.ts`**: NextAuth configuration and providers
+- **`src/lib/prisma.tsx`**: Prisma client wrapper
+- **`src/components`**: UI components and dashboard pieces
+- **`prisma/schema.prisma`**: Prisma schema (`postgresql` datasource)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Deployment Notes**
+- Ensure `DATABASE_URL` and `NEXTAUTH_SECRET` are set in your host (Vercel, Railway, Render, etc.).
+- Run Prisma migrations on deploy (`npx prisma migrate deploy`) or use your CI to apply them.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-
-Why I chose Prisma ORM:
-1. A modern Object Relational Mapper for Node.js & TypeScript that simplifies database interactions by providing a *type-safe* query builder, automated migrations and intuitive data modeling. 
-   
-2. This reduces:
-   - Bugs 
-   - Boilerplate
-   - Cognitive load 
+**Contributing**
+- Open a PR for improvements or bug fixes. If adding DB changes, include a migration and update the schema.
