@@ -85,3 +85,7 @@ Open `http://localhost:3000`.
 
 **Contributing**
 - Open a PR for improvements or bug fixes. If adding DB changes, include a migration and update the schema.
+
+**Future Improvements**
+- Report page to generate report of weekly, monthly, yearly spending/saving records. 
+- Allow users to link their account bank account to display live balances instead of custom balance (will need to figure out how to make it really secure)
