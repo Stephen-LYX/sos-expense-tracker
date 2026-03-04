@@ -1,4 +1,4 @@
-**SOS Expense Tracker**
+**SOS Expense Tracker** [Demo Link](https://sos-expense-tracker.vercel.app/)
 
 Simple personal expense tracking app built with Next.js, TypeScript, Prisma and NextAuth.
 
@@ -21,6 +21,7 @@ Simple personal expense tracking app built with Next.js, TypeScript, Prisma and 
 - **ORM:** Prisma (`postgresql` datasource)
 - **DB driver:** `pg` (Postgres)
 - **Charts / UI:** Shadcn, Tailwind, Lucide icons
+- **Deployment:** Vercel
 
 **Quick Start (local)**
 1. **Prerequisites:**
